@@ -1,0 +1,10 @@
+{
+  "archives": {
+    "windows_386": {
+      "hashes": [
+        "h1:oNP923gBxu22+/e1YLLIrn27DN83c4hb79JYb5X8Et8="
+      ],
+      "url": "terraform-provider-google-beta_5.43.1_windows_386.zip"
+    }
+  }
+}
