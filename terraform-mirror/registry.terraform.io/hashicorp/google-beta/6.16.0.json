@@ -1,0 +1,10 @@
+{
+  "archives": {
+    "windows_amd64": {
+      "hashes": [
+        "h1:5FT2B0YeVze7fY+AivhPe8b6lZk8pp1vqXT6JjOiXYs="
+      ],
+      "url": "terraform-provider-google-beta_6.16.0_windows_amd64.zip"
+    }
+  }
+}

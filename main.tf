@@ -1,10 +1,11 @@
 # ic
 
 module "ic-service-account" {
-  source     = "./modules/service-account"
+  source     = "./modules/iam-service-account"
   project_id = var.project_id
-  name       = "ic-service-account"
-  project_roles = [
+  name       = "ic-service-account-fabric"
+  iam_project_roles = {
+     "${var.project_id}" = [
     "roles/artifactregistry.writer",
     "roles/artifactregistry.reader",
     "roles/run.invoker",
@@ -18,7 +19,8 @@ module "ic-service-account" {
     "roles/logging.bucketWriter",
     "roles/logging.logWriter",
     "roles/vpcaccess.serviceAgent",
-  ]
+    ]
+  }
 }
 
 module "ic-cr" {
@@ -48,23 +50,14 @@ module "ic-cr" {
 
   eventarc_triggers = {
     gcs_bucket = {
-      module.ic-bucket.names[keys(module.ic-bucket.names)[0]] = {
+      "module.ic-bucket.name" = {
         type        = "google.cloud.storage.object.v1.finalized"
-        bucket_name = module.ic-bucket.names[keys(module.ic-bucket.names)[0]]
+        bucket_name = module.ic-bucket.name
       }
     }
     service_account_create = true
   }
   service_account = module.ic-service-account.email
-}
-
-module "ic-bucket" {
-  source     = "terraform-google-modules/cloud-storage/google"
-  project_id = var.project_id
-  names      = ["ic-gcs-zigzag"]
-  location   = var.region
-  storage_admins    = [module.trusted-service-account.iam_email]
-  set_admin_roles   = true
 }
 
 module "ic-vpc" {
@@ -92,12 +85,43 @@ module "ic-artifact-registry" {
 
 # share with 9900
 module "trusted-bucket" {
-  source     = "terraform-google-modules/cloud-storage/google"
+  source     = "./modules/gcs-flash"
   project_id = var.project_id_trusted
-  names      = ["trusted-gcs-zigzag"]
+  name       = "trusted-gcs-zigzag"
   location   = var.region
-  folders = {
-    "trusted-gcs-zigzag" = ["codes","files"]
+  managed_folders = {
+    codes = {
+      iam = {
+        "roles/storage.folderAdmin" = [module.trusted-service-account.iam_email],
+        # "roles/storage.objectUser" = [module.trusted-service-account.iam_email]
+      }
+    }
+    files = {
+      iam = {
+        "roles/storage.folderAdmin" = [module.trusted-service-account.iam_email]
+      }
+    }
+  }
+}
+
+module "ic-bucket" {
+  source     = "./modules/gcs-flash"
+  project_id = var.project_id
+  name       = "ic-gcs-zigzag"
+  location   = var.region
+  managed_folders = {
+    codes = {
+      iam = {
+        "roles/storage.folderAdmin" = [module.trusted-service-account.iam_email],
+        "roles/storage.folderAdmin" = [module.ic-service-account.email]
+      }
+    }
+    files = {
+      iam = {
+        "roles/storage.folderAdmin" = [module.trusted-service-account.iam_email],
+        "roles/storage.folderAdmin" = [module.ic-service-account.email]
+      }
+    }
   }
 }
 
@@ -108,9 +132,10 @@ module "trusted-cr" {
   containers = {
     "container" = {
       env = {
-        IC_BUCKET_NAME = module.ic-bucket.names[keys(module.ic-bucket.names)[0]]
+        IC_BUCKET_NAME = module.ic-bucket.name
         IC_PROJECT_NAME      = var.project_id
         TRUSTED_PROJECT_NAME = var.project_id_trusted
+        TRUSTED_BUCKET = module.trusted-bucket.name
       }
       "image" = "${var.region}-docker.pkg.dev/${var.project_id_trusted}/trusted-artifact-registry/copypasta:latest",
       "resources" = {
@@ -134,9 +159,9 @@ module "trusted-cr" {
 
   eventarc_triggers = {
     gcs_bucket = {
-      module.trusted-bucket.names[keys(module.trusted-bucket.names)[0]] = {
+      "module.trusted-bucket.name" = {
         type        = "google.cloud.storage.object.v1.finalized"
-        bucket_name = module.trusted-bucket.names[keys(module.trusted-bucket.names)[0]]
+        bucket_name = module.trusted-bucket.name
       }
     }
     service_account_create = true
@@ -145,10 +170,11 @@ module "trusted-cr" {
 }
 
 module "trusted-service-account" {
-  source     = "./modules/service-account"
+  source     = "./modules/iam-service-account"
   project_id = var.project_id_trusted
   name       = "zigzag-trusted-service-account"
-  project_roles = [
+  iam_project_roles = {
+    "${var.project_id}" = [
     "roles/artifactregistry.writer",
     "roles/artifactregistry.reader",
     "roles/run.invoker",
@@ -162,6 +188,7 @@ module "trusted-service-account" {
     "roles/storage.objectCreator",
 
   ]
+  }
 }
 
 module "trusted-artifact-registry" {
