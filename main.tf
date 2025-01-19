@@ -1,4 +1,4 @@
-# ic
+# # # ic
 
 module "ic-service-account" {
   source     = "./modules/iam-service-account"
@@ -9,11 +9,10 @@ module "ic-service-account" {
     "roles/artifactregistry.writer",
     "roles/artifactregistry.reader",
     "roles/run.invoker",
-    "roles/storage.objectUser",
-    "roles/storage.objectViewer",
-    "roles/storage.objectAdmin",
-    "roles/storage.objectAdmin",
-    "roles/storage.admin",
+    # "roles/storage.objectUser",
+    # "roles/storage.objectViewer",
+    # "roles/storage.objectAdmin",
+    # "roles/storage.admin",
     "roles/serviceusage.serviceUsageAdmin",
     "roles/iam.serviceAccountTokenCreator",
     "roles/logging.bucketWriter",
@@ -81,6 +80,27 @@ module "ic-artifact-registry" {
   repository_id = "ic-artifact-registry"
 }
 
+
+module "ic-bucket" {
+  source     = "./modules/gcs-flash"
+  project_id = var.project_id
+  name       = "ic-gcs-zigzag"
+  location   = var.region
+  managed_folders = {
+    codes = {
+      iam = {
+        "roles/storage.folderAdmin" = [module.trusted-service-account.iam_email,module.ic-service-account.iam_email]
+      }
+    }
+    files = {
+      iam = {
+        "roles/storage.folderAdmin" = [module.trusted-service-account.iam_email,module.ic-service-account.iam_email]
+      }
+    }
+  }
+}
+
+
 # trusted
 
 # share with 9900
@@ -92,8 +112,7 @@ module "trusted-bucket" {
   managed_folders = {
     codes = {
       iam = {
-        "roles/storage.folderAdmin" = [module.trusted-service-account.iam_email],
-        # "roles/storage.objectUser" = [module.trusted-service-account.iam_email]
+        "roles/storage.folderAdmin" = [module.trusted-service-account.iam_email]
       }
     }
     files = {
@@ -104,26 +123,6 @@ module "trusted-bucket" {
   }
 }
 
-module "ic-bucket" {
-  source     = "./modules/gcs-flash"
-  project_id = var.project_id
-  name       = "ic-gcs-zigzag"
-  location   = var.region
-  managed_folders = {
-    codes = {
-      iam = {
-        "roles/storage.folderAdmin" = [module.trusted-service-account.iam_email],
-        "roles/storage.folderAdmin" = [module.ic-service-account.email]
-      }
-    }
-    files = {
-      iam = {
-        "roles/storage.folderAdmin" = [module.trusted-service-account.iam_email],
-        "roles/storage.folderAdmin" = [module.ic-service-account.email]
-      }
-    }
-  }
-}
 
 module "trusted-cr" {
   source     = "./modules/cloudrun"
@@ -178,15 +177,13 @@ module "trusted-service-account" {
     "roles/artifactregistry.writer",
     "roles/artifactregistry.reader",
     "roles/run.invoker",
-    "roles/storage.objectUser",
+    # "roles/storage.objectUser",
     "roles/serviceusage.serviceUsageAdmin",
     "roles/iam.serviceAccountTokenCreator",
     # "roles/logging.bucketWriter",
     # "roles/logging.logWriter",
     "roles/vpcaccess.serviceAgent",
-    "roles/storage.objectCreator",
-    "roles/storage.objectCreator",
-
+    # "roles/storage.objectCreator"
   ]
   }
 }

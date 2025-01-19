@@ -1,6 +1,6 @@
 provider_installation {
   filesystem_mirror {
-    path = "C:\\Users\\aviva\\Desktop\\zigzag\\terraform-mirror"
+    path = "C:\\Users\\NKlein\\Desktop\\dev\\zigzag\\terraform-mirror"
     include = [
       "registry.terraform.io/hashicorp/google",
       "registry.terraform.io/hashicorp/google-beta"
