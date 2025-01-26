@@ -60,9 +60,10 @@ module "ic-cr" {
 }
 
 module "ic-vpc" {
-  source       = "terraform-google-modules/network/google"
+  source       = "./modules/vpc"
+  name = "ic-vpc"
   project_id   = var.project_id
-  network_name = "ic-vpc"
+  # network_name = "ic-vpc"
   subnets = [
     {
       subnet_name   = "ic-subnet"
@@ -73,7 +74,7 @@ module "ic-vpc" {
 }
 
 module "ic-artifact-registry" {
-  source        = "GoogleCloudPlatform/artifact-registry/google"
+  source        = "./modules/artifact-registry"
   project_id    = var.project_id
   location      = var.region
   format        = "DOCKER"
@@ -185,7 +186,7 @@ module "trusted-cr" {
 }
 
 module "trusted-artifact-registry" {
-  source        = "GoogleCloudPlatform/artifact-registry/google"
+  source        = "./modules/artifact-registry"
   project_id    = var.project_id_trusted
   location      = var.region
   format        = "DOCKER"
