@@ -60,7 +60,7 @@ module "ic-cr" {
 }
 
 module "ic-vpc" {
-  source       = "./cloud-foundation-fabric/modules/net-vpc"
+  source       = "./modules/net-vpc"
   name = "ic-vpc"
   project_id   = var.project_id
   //network_name = "ic-vpc"
@@ -74,11 +74,11 @@ module "ic-vpc" {
 }
 
 module "ic-artifact-registry" {
-  source        = "./modules/artifact-registry"
+  source        = "./modules/artifact-registry-fabric"
   project_id    = var.project_id
   location      = var.region
   format        = "DOCKER"
-  repository_id = "ic-artifact-registry"
+  name = "ic-artifact-registry"
 }
 
 
@@ -186,9 +186,9 @@ module "trusted-cr" {
 }
 
 module "trusted-artifact-registry" {
-  source        = "./modules/artifact-registry"
+  source        = "./modules/artifact-registry-fabric"
   project_id    = var.project_id_trusted
   location      = var.region
   format        = "DOCKER"
-  repository_id = "trusted-artifact-registry"
+  name = "trusted-artifact-registry"
 }
