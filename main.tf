@@ -60,10 +60,10 @@ module "ic-cr" {
 }
 
 module "ic-vpc" {
-  source       = "./modules/vpc"
+  source       = "./cloud-foundation-fabric/modules/net-vpc"
   name = "ic-vpc"
   project_id   = var.project_id
-  # network_name = "ic-vpc"
+  //network_name = "ic-vpc"
   subnets = [
     {
       subnet_name   = "ic-subnet"
