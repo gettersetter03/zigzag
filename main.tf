@@ -40,7 +40,7 @@ module "ic-cr" {
   revision = {
     name = "v1"
     vpc_access = {
-      vpc    = module.ic-vpc.network_name
+      vpc    = module.ic-vpc.name
       subnet = "ic-subnet"
     }
     max_instance_count = 1
@@ -63,12 +63,11 @@ module "ic-vpc" {
   source       = "./modules/net-vpc"
   name = "ic-vpc"
   project_id   = var.project_id
-  //network_name = "ic-vpc"
   subnets = [
     {
-      subnet_name   = "ic-subnet"
-      subnet_ip     = "10.71.69.0/24"
-      subnet_region = var.region
+      name   = "ic-subnet"
+      ip_cidr_range   = "10.71.69.0/24"
+      region = var.region
     },
   ]
 }
@@ -77,7 +76,7 @@ module "ic-artifact-registry" {
   source        = "./modules/artifact-registry-fabric"
   project_id    = var.project_id
   location      = var.region
-  format        = "DOCKER"
+  format        = { docker = { standard = {} } }
   name = "ic-artifact-registry"
 }
 
@@ -189,6 +188,6 @@ module "trusted-artifact-registry" {
   source        = "./modules/artifact-registry-fabric"
   project_id    = var.project_id_trusted
   location      = var.region
-  format        = "DOCKER"
+  format        = { docker = { standard = {} } }
   name = "trusted-artifact-registry"
 }
