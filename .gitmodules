@@ -1,0 +1,3 @@
+[submodule "terraform-google-network"]
+	path = terraform-google-network
+	url = https://github.com/terraform-google-modules/terraform-google-network.git
