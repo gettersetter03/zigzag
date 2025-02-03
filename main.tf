@@ -26,9 +26,10 @@ module "ic-cr-service-account" {
   name       = "ic-cr-service-account"
   iam_project_roles = {
      "${var.project_id}" = [
-    # "roles/storage.objectViewer",
     "roles/eventarc.eventReceiver",
-    "roles/pubsub.publisher"
+    "roles/pubsub.publisher",
+    "roles/run.invoker",
+    "roles/storage.objectViewer"
     ]
   }
 }
@@ -60,7 +61,7 @@ module "ic-cr" {
   
   eventarc_triggers = {
     gcs_bucket = {      
-      "bob" = {
+      "ic-trigger" = {
         type        = "google.cloud.storage.object.v1.finalized"
         bucket_name = module.ic-bucket.name
       },
@@ -69,19 +70,6 @@ module "ic-cr" {
   }
   service_account = module.ic-service-account.email
 }
-
-# module "ic-vpc" {
-#   source       = "./modules/net-vpc"
-#   name = "ic-vpc"
-#   project_id   = var.project_id
-#   subnets = [
-#     {
-#       name   = "ic-subnet"
-#       ip_cidr_range   = "10.71.69.0/24"
-#       region = var.region
-#     },
-#   ]
-# }
 
 module "ic-artifact-registry" {
   source        = "./modules/artifact-registry-fabric"
@@ -114,6 +102,18 @@ module "ic-bucket" {
   }
 }
 
+module "ic-vpc" {
+  source       = "./modules/net-vpc"
+  name = "ic-vpc"
+  project_id   = var.project_id
+  subnets = [
+    {
+      name   = "ic-subnet"
+      ip_cidr_range   = "10.71.69.0/24"
+      region = var.region
+    },
+  ]
+}
 
 # trusted
 module "trusted-service-account" {
@@ -138,7 +138,9 @@ module "trusted-cr-service-account" {
   iam_project_roles = {
     "${var.project_id_trusted}" = [
       "roles/eventarc.eventReceiver",
-      "roles/pubsub.publisher"
+      "roles/pubsub.publisher",
+      "roles/run.invoker",
+      "roles/storage.objectViewer"
   ]
   }
 }
@@ -200,7 +202,7 @@ module "trusted-cr" {
 
   eventarc_triggers = {
     gcs_bucket = {
-      "bob-trusted"= {
+      "trusted-trigger"= {
         type        = "google.cloud.storage.object.v1.finalized"
         bucket_name = module.trusted-bucket.name
       }
