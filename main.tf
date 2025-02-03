@@ -1,5 +1,4 @@
 # ic
-
 module "ic-service-account" {
   source     = "./modules/iam-service-account"
   project_id = var.project_id
@@ -18,6 +17,18 @@ module "ic-service-account" {
     "roles/logging.bucketWriter",
     "roles/logging.logWriter",
     "roles/vpcaccess.serviceAgent",
+    ]
+  }
+}
+module "ic-cr-service-account" {
+  source     = "./modules/iam-service-account"
+  project_id = var.project_id
+  name       = "ic-cr-service-account"
+  iam_project_roles = {
+     "${var.project_id}" = [
+    # "roles/storage.objectViewer",
+    "roles/eventarc.eventReceiver",
+    "roles/pubsub.publisher"
     ]
   }
 }
@@ -40,37 +51,37 @@ module "ic-cr" {
   revision = {
     name = "v1"
     vpc_access = {
-      vpc    = module.ic-vpc.name
+      vpc    = var.ic_vpc_name
       subnet = "ic-subnet"
     }
     max_instance_count = 1
     min_instance_count = 1
   }
-
+  
   eventarc_triggers = {
-    gcs_bucket = {
-      "${module.ic-bucket.name}" = {
+    gcs_bucket = {      
+      "bob" = {
         type        = "google.cloud.storage.object.v1.finalized"
         bucket_name = module.ic-bucket.name
-      }
+      },
     }
-    service_account_create = true
+    service_account_email = module.ic-cr-service-account.email
   }
   service_account = module.ic-service-account.email
 }
 
-module "ic-vpc" {
-  source       = "./modules/net-vpc"
-  name = "ic-vpc"
-  project_id   = var.project_id
-  subnets = [
-    {
-      name   = "ic-subnet"
-      ip_cidr_range   = "10.71.69.0/24"
-      region = var.region
-    },
-  ]
-}
+# module "ic-vpc" {
+#   source       = "./modules/net-vpc"
+#   name = "ic-vpc"
+#   project_id   = var.project_id
+#   subnets = [
+#     {
+#       name   = "ic-subnet"
+#       ip_cidr_range   = "10.71.69.0/24"
+#       region = var.region
+#     },
+#   ]
+# }
 
 module "ic-artifact-registry" {
   source        = "./modules/artifact-registry-fabric"
@@ -85,24 +96,26 @@ module "ic-bucket" {
   source     = "./modules/gcs-flash"
   project_id = var.project_id
   name       = "ic-gcs"
+  prefix = var.project_id
   location   = var.region
   managed_folders = {
     codes = {
       iam = {
         "roles/storage.objectUser" = [module.trusted-service-account.iam_email,module.ic-service-account.iam_email]
+        # "roles/storage.objectUser" = [module.ic-service-account.iam_email]
       }
     }
     files = {
       iam = {
         "roles/storage.objectUser" = [module.trusted-service-account.iam_email,module.ic-service-account.iam_email]
+        # "roles/storage.objectUser" = [module.ic-service-account.iam_email]
       }
     }
   }
 }
 
 
-# # trusted
-
+# trusted
 module "trusted-service-account" {
   source     = "./modules/iam-service-account"
   project_id = var.project_id_trusted
@@ -114,7 +127,18 @@ module "trusted-service-account" {
     "roles/run.invoker",
     "roles/serviceusage.serviceUsageAdmin",
     "roles/iam.serviceAccountTokenCreator",
-    "roles/vpcaccess.serviceAgent"
+    "roles/vpcaccess.serviceAgent",
+  ]
+  }
+}
+module "trusted-cr-service-account" {
+  source     = "./modules/iam-service-account"
+  project_id = var.project_id_trusted
+  name       = "trusted-cr-service-account"
+  iam_project_roles = {
+    "${var.project_id_trusted}" = [
+      "roles/eventarc.eventReceiver",
+      "roles/pubsub.publisher"
   ]
   }
 }
@@ -123,6 +147,7 @@ module "trusted-service-account" {
 module "trusted-bucket" {
   source     = "./modules/gcs-flash"
   project_id = var.project_id_trusted
+  prefix = var.project_id_trusted
   name       = "trusted-gcs"
   location   = var.region
   managed_folders = {
@@ -144,6 +169,7 @@ module "trusted-cr" {
   source     = "./modules/cloudrun"
   project_id = var.project_id_trusted
   name       = "td-cr-zigzag"
+  service_account = module.trusted-service-account.email
   containers = {
     "container" = {
       env = {
@@ -174,14 +200,14 @@ module "trusted-cr" {
 
   eventarc_triggers = {
     gcs_bucket = {
-      "${module.trusted-bucket.name}" = {
+      "bob-trusted"= {
         type        = "google.cloud.storage.object.v1.finalized"
         bucket_name = module.trusted-bucket.name
       }
     }
-    service_account_create = true
+    service_account_email = module.trusted-cr-service-account.email
   }
-  service_account = module.trusted-service-account.email
+  
 }
 
 module "trusted-artifact-registry" {

@@ -24,3 +24,7 @@ variable "shared_vpc_project" {
 variable "shared_subnet" {
   type = string
 }
+
+variable "ic_vpc_name" {
+  type = string
+}
