@@ -42,6 +42,7 @@ module "ic-cr" {
   project_id = var.project_id
   name       = "ic-cr-zigzag"
   service_account = module.ic-service-account.email
+
   containers = {
     "container" = {
       "image" = "${var.region}-docker.pkg.dev/${var.project_id}/ic-artifact-registry/puppeteer:latest",
@@ -53,14 +54,15 @@ module "ic-cr" {
       }
     }
   }
+
+   # Attach VPC Connector
   revision = {
-    name = "v1"
     vpc_access = {
-      vpc    = var.ic_vpc_name
-      subnet = "ic-subnet"
+      connector = module.ic-serverless-connector.vpc_connectors[0].name  # Reference the VPC Connector
+      vpc       = "ic-vpc"                 # VPC Network Name
+      subnet    = null               # Subnet Name (optional)
+      tags      = null         # Optional network tags
     }
-    max_instance_count = 1
-    min_instance_count = 1
   }
   
   eventarc_triggers = {
@@ -108,6 +110,25 @@ module "ic-bucket" {
     }
   }
 }
+
+module "ic-serverless-connector" {
+  source     = "./modules/vpc-serverless-connector-beta"
+  project_id = var.project_id
+
+  vpc_connectors = [{
+    name           = "ic-vpc-connector"
+    region         = "me-west1"
+    network        = "ic-vpc"
+    subnet_name    = null
+    ip_cidr_range  = "10.8.0.0/28"
+    host_project_id = var.project_id
+    machine_type   = "e2-micro"
+    min_instances  = 2
+    max_instances  = 10
+    max_throughput = 300
+  }]
+}
+
 
 # module "ic-vpc" {
 #   source       = "./modules/net-vpc"
