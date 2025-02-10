@@ -45,6 +45,9 @@ module "ic-cr" {
 
   containers = {
     "container" = {
+      env = {
+        INTERCONNECT_BUCKET_NAME = module.ic-bucket.name
+      }
       "image" = "${var.region}-docker.pkg.dev/${var.project_id}/ic-artifact-registry/puppeteer:latest",
       "resources" = {
         limits = {
@@ -58,7 +61,7 @@ module "ic-cr" {
    # Attach VPC Connector
   revision = {
     vpc_access = {
-      connector = module.ic-serverless-connector.vpc_connectors[0].name  # Reference the VPC Connector
+      connector = one(module.ic-serverless-connector.connector_ids)  # Reference the VPC Connector
       vpc       = "ic-vpc"                 # VPC Network Name
       subnet    = null               # Subnet Name (optional)
       tags      = null         # Optional network tags
@@ -125,7 +128,7 @@ module "ic-serverless-connector" {
     machine_type   = "e2-micro"
     min_instances  = 2
     max_instances  = 10
-    max_throughput = 300
+    # max_throughput = 300
   }]
 }
 
@@ -253,3 +256,5 @@ module "trusted-artifact-registry" {
   format        = { docker = { standard = {} } }
   name = "trusted-artifact-registry"
 }
+
+# https://console.cloud.google.com/iam-admin/troubleshooter;permissions=storage.objects.get;principal=ic-service-account@sky3-prod-zigzag.iam.gserviceaccount.com;resources=%2F%2Fstorage.googleapis.com%2Fprojects%2F_%2Fbuckets%2Fsky3-prod-zigzag-ic-gcs
