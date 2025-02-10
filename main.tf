@@ -8,8 +8,8 @@ module "ic-service-account" {
     "roles/artifactregistry.writer",
     "roles/artifactregistry.reader",
     "roles/run.invoker",
-    # "roles/storage.objectUser",
-    # "roles/storage.objectViewer",
+    "roles/storage.objectUser",
+    "roles/storage.objectViewer",
     # "roles/storage.objectAdmin",
     # "roles/storage.admin",
     "roles/serviceusage.serviceUsageAdmin",
@@ -17,6 +17,9 @@ module "ic-service-account" {
     "roles/logging.bucketWriter",
     "roles/logging.logWriter",
     "roles/vpcaccess.serviceAgent",
+    "roles/compute.networkUser",
+    "roles/vpcaccess.user",
+    
     ]
   }
 }
@@ -29,7 +32,7 @@ module "ic-cr-service-account" {
     "roles/eventarc.eventReceiver",
     "roles/pubsub.publisher",
     "roles/run.invoker",
-    "roles/storage.objectViewer"
+    "roles/storage.objectViewer",
     ]
   }
 }
@@ -38,6 +41,7 @@ module "ic-cr" {
   source     = "./modules/cloudrun"
   project_id = var.project_id
   name       = "ic-cr-zigzag"
+  service_account = module.ic-service-account.email
   containers = {
     "container" = {
       "image" = "${var.region}-docker.pkg.dev/${var.project_id}/ic-artifact-registry/puppeteer:latest",
@@ -68,7 +72,7 @@ module "ic-cr" {
     }
     service_account_email = module.ic-cr-service-account.email
   }
-  service_account = module.ic-service-account.email
+  
 }
 
 module "ic-artifact-registry" {
@@ -86,12 +90,15 @@ module "ic-bucket" {
   name       = "ic-gcs"
   prefix = var.project_id
   location   = var.region
+  
+  //storage_users = [module.ic-service-account.iam_email]
   managed_folders = {
     codes = {
       iam = {
         "roles/storage.objectUser" = [module.trusted-service-account.iam_email,module.ic-service-account.iam_email]
         # "roles/storage.objectUser" = [module.ic-service-account.iam_email]
       }
+      
     }
     files = {
       iam = {
@@ -102,18 +109,18 @@ module "ic-bucket" {
   }
 }
 
-module "ic-vpc" {
-  source       = "./modules/net-vpc"
-  name = "ic-vpc"
-  project_id   = var.project_id
-  subnets = [
-    {
-      name   = "ic-subnet"
-      ip_cidr_range   = "10.71.69.0/24"
-      region = var.region
-    },
-  ]
-}
+# module "ic-vpc" {
+#   source       = "./modules/net-vpc"
+#   name = "ic-vpc"
+#   project_id   = var.project_id
+#   subnets = [
+#     {
+#       name   = "ic-subnet"
+#       ip_cidr_range   = "10.71.69.0/24"
+#       region = var.region
+#     },
+#   ]
+# }
 
 # trusted
 module "trusted-service-account" {
@@ -128,6 +135,12 @@ module "trusted-service-account" {
     "roles/serviceusage.serviceUsageAdmin",
     "roles/iam.serviceAccountTokenCreator",
     "roles/vpcaccess.serviceAgent",
+    "roles/storage.objectUser",
+    "roles/compute.networkUser",
+    "roles/vpcaccess.user"
+  ],
+    "${var.project_id}" = [
+    "roles/storage.objectUser",
   ]
   }
 }
