@@ -45,6 +45,9 @@ module "ic-cr" {
 
   containers = {
     "container" = {
+      env = {
+        INTERCONNECT_BUCKET_NAME = module.ic-bucket.name
+      }
       "image" = "${var.region}-docker.pkg.dev/${var.project_id}/ic-artifact-registry/puppeteer:latest",
       "resources" = {
         limits = {
