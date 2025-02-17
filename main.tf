@@ -132,19 +132,32 @@ module "ic-serverless-connector" {
   }]
 }
 
+module "gcp-azure-ha-vpn" {
+  source = "./modules/gcp-azure-ha-vpn"
+  gcp_vpc_name   = var.gcp_vpc_name
+  gcp_region = var.gcp_region
+  gcp_project_id = var.project_id
+  gcp_bgp_asn = var.gcp_bgp_asn
+  gcp_router_name = var.gcp_router_name
+  azure_public_ip_1 = var.azure_public_ip_1
+  azure_public_ip_2 = var.azure_public_ip_2
+  shared_secret = 
+}
 
-# module "ic-vpc" {
-#   source       = "./modules/net-vpc"
-#   name = "ic-vpc"
-#   project_id   = var.project_id
-#   subnets = [
-#     {
-#       name   = "ic-subnet"
-#       ip_cidr_range   = "10.71.69.0/24"
-#       region = var.region
-#     },
-#   ]
-# }
+
+module "ic-vpc" {
+  source       = "./modules/net-vpc"
+  name = "ic-vpc"
+  project_id   = var.project_id
+  subnets = [
+    {
+      name   = "ic-subnet"
+      ip_cidr_range   = "10.71.69.0/24"
+      region = var.region
+      private_ip_google_access = true
+    },
+  ]
+}
 
 # trusted
 module "trusted-service-account" {
@@ -228,7 +241,6 @@ module "trusted-cr" {
     }
   }
   revision = {
-    name = "v1"
     vpc_access = {
       vpc    = "projects/${var.shared_vpc_project}/global/networks/${var.shared_vpc}"
       subnet = "projects/${var.shared_vpc_project}/regions/${var.region}/subnetworks/${var.shared_subnet}"

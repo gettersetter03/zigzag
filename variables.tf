@@ -28,3 +28,39 @@ variable "shared_subnet" {
 variable "ic_vpc_name" {
   type = string
 }
+
+variable "gcp_region" {
+  description = "The GCP region."
+  type        = string
+}
+
+variable "gcp_vpc_name" {
+  description = "The GCP VPC name."
+  type        = string
+}
+
+variable "gcp_router_name" {
+  description = "The GCP VPN router name."
+  type        = string
+}
+
+variable "azure_public_ip_1" {
+  type        = string
+  description = "The Azure Subscription ID"
+}
+
+variable "azure_public_ip_2" {
+  type        = string
+  description = "The Azure Subscription ID"
+}
+
+variable "gcp_bgp_asn" {
+  description = "The GCP VPC Router ASN"
+  type        = string
+  default     = "65534"
+}
+
+variable "gcp_project_id" {
+  description = "The GCP project ID."
+  type        = string
+}
