@@ -95,17 +95,19 @@ module "ic-bucket" {
   name       = "ic-gcs"
   prefix = var.project_id
   location   = var.region
-  
+  force_destroy = true
   //storage_users = [module.ic-service-account.iam_email]
   managed_folders = {
+    
     codes = {
+      force_destroy = true
       iam = {
         "roles/storage.objectUser" = [module.trusted-service-account.iam_email,module.ic-service-account.iam_email]
         # "roles/storage.objectUser" = [module.ic-service-account.iam_email]
       }
-      
     }
     files = {
+      force_destroy = true
       iam = {
         "roles/storage.objectUser" = [module.trusted-service-account.iam_email,module.ic-service-account.iam_email]
         # "roles/storage.objectUser" = [module.ic-service-account.iam_email]
@@ -132,17 +134,17 @@ module "ic-serverless-connector" {
   }]
 }
 
-module "gcp-azure-ha-vpn" {
-  source = "./modules/gcp-azure-ha-vpn"
-  gcp_vpc_name   = var.gcp_vpc_name
-  gcp_region = var.gcp_region
-  gcp_project_id = var.project_id
-  gcp_bgp_asn = var.gcp_bgp_asn
-  gcp_router_name = var.gcp_router_name
-  azure_public_ip_1 = var.azure_public_ip_1
-  azure_public_ip_2 = var.azure_public_ip_2
-  shared_secret = 
-}
+# module "gcp-azure-ha-vpn" {
+#   source = "./modules/gcp-azure-ha-vpn"
+#   gcp_vpc_name   = var.gcp_vpc_name
+#   gcp_region = var.gcp_region
+#   gcp_project_id = var.project_id
+#   gcp_bgp_asn = var.gcp_bgp_asn
+#   gcp_router_name = var.gcp_router_name
+#   azure_public_ip_1 = var.azure_public_ip_1
+#   azure_public_ip_2 = var.azure_public_ip_2
+#   shared_secret = 
+# }
 
 
 module "ic-vpc" {
@@ -202,13 +204,17 @@ module "trusted-bucket" {
   prefix = var.project_id_trusted
   name       = "trusted-gcs"
   location   = var.region
+  force_destroy = true
   managed_folders = {
+    
     codes = {
+      force_destroy = true
       iam = {
         "roles/storage.objectUser" = [module.trusted-service-account.iam_email]
       }
     }
     files = {
+      force_destroy = true
       iam = {
         "roles/storage.objectUser" = [module.trusted-service-account.iam_email]
       }
@@ -268,57 +274,3 @@ module "trusted-artifact-registry" {
   format        = { docker = { standard = {} } }
   name = "trusted-artifact-registry"
 }
-
-sky3-prod-zigzag:
-	1012764049148@cloudservices.gserviceaccount.com - Editor
-	service-1012764049148@containerregistry.iam.gserviceaccount.com - Container Registry Service Agent
-	service-1012764049148@gcp-sa-artifactregistry.iam.gserviceaccount.com - Artifact Registry Service Agent
-	service-1012764049148@gcp-sa-cloudscheduler.iam.gserviceaccount.com - Cloud Scheduler Service Agent
-	service-1012764049148@gcp-sa-eventarc.iam.gserviceaccount.com - Eventarc Service Agent
-	service-1012764049148@gcp-sa-pubsub.iam.gserviceaccount.com - Cloud Pub/Sub Service Agent
-	service-1012764049148@gcp-sa-websecurityscanner.iam.gserviceaccount.com - Cloud Web Security Scanner Service Agent
-	service-1012764049148@gs-project-accounts.iam.gserviceaccount.com - Pub/Sub Publisher
-	service-1012764049148@serverless-robot-prod.iam.gserviceaccount.com - Cloud Run Service Agent
-
-sky3-geo-dig-prd-t-zigzag-1:
-	598895811419@cloudbuild.gserviceaccount.com - Cloud Build Service Account
-	598895811419@cloudservices.gserviceaccount.com - Editor
-	service-598895811419@compute-system.iam.gserviceaccount.com - Compute Engine Service Agent
-	service-598895811419@container-engine-robot.iam.gserviceaccount.com - Kubernetes Engine Service Agent
-	service-598895811419@containerregistry.iam.gserviceaccount.com - Container Registry Service Agent
-	service-598895811419@gcf-admin-robot.iam.gserviceaccount.com - Cloud Functions Service Agent
-	service-598895811419@gcp-sa-artifactregistry.iam.gserviceaccount.com - Artifact Registry Service Agent
-	service-598895811419@gcp-sa-cloudbuild.iam.gserviceaccount.com - Cloud Build Service Agent
-	service-598895811419@gcp-sa-cloudscheduler.iam.gserviceaccount.com - Cloud Scheduler Service Agent
-	service-598895811419@gcp-sa-eventarc.iam.gserviceaccount.com - Eventarc Service Agent
-	service-598895811419@gcp-sa-gkenode.iam.gserviceaccount.com - Kubernetes Engine Node Service Agent
-	service-598895811419@gcp-sa-pubsub.iam.gserviceaccount.com - Cloud Pub/Sub Service Agent
-	service-598895811419@gcp-sa-websecurityscanner.iam.gserviceaccount.com - Cloud Web Security Scanner Service Agent
-	service-598895811419@gs-project-accounts.iam.gserviceaccount.com - Pub/Sub Publisher
-	service-598895811419@serverless-robot-prod.iam.gserviceaccount.com - Cloud Run Service Agent
-
-
-WHAT HAS BEEN REMOVED AFTER PENTEST
-sky3-geo-dig-prd-t-zigzag-1:
-	598895811419@cloudservices.gserviceaccount.com - Editor
-	service-598895811419@container-engine-robot.iam.gserviceaccount.com - Kubernetes Engine Service Agent
-	service-598895811419@containerregistry.iam.gserviceaccount.com - Container Registry Service Agent
-	service-598895811419@gcp-sa-artifactregistry.iam.gserviceaccount.com - Artifact Registry Service Agent
-	service-598895811419@gcp-sa-cloudscheduler.iam.gserviceaccount.com - Cloud Scheduler Service Agent
-	service-598895811419@gcp-sa-pubsub.iam.gserviceaccount.com - Cloud Pub/Sub Service Agent
-	service-598895811419@gcp-sa-websecurityscanner.iam.gserviceaccount.com - Cloud Web Security Scanner Service Agent
-sky3-prod-zigzag:
-	1012764049148@cloudservices.gserviceaccount.com - Editor
-	service-1012764049148@compute-system.iam.gserviceaccount.com - Compute Engine Service Agent
-	service-1012764049148@containerregistry.iam.gserviceaccount.com - Container Registry Service Agent
-	service-1012764049148@gcp-sa-artifactregistry.iam.gserviceaccount.com - Artifact Registry Service Agent
-	service-1012764049148@gcp-sa-cloudscheduler.iam.gserviceaccount.com - Cloud Scheduler Service Agent
-	service-1012764049148@gcp-sa-pubsub.iam.gserviceaccount.com - Cloud Pub/Sub Service Agent
-	service-1012764049148@gcp-sa-websecurityscanner.iam.gserviceaccount.com - Cloud Web Security Scanner Service Agent
-	
-  $env:TF_CLI_CONFIG_FILE="C:\Users\ITertman\Desktop\dev\zigzag\.terraformrc"
-gcloud auth application-default login
-service-598895811419@gcp-sa-eventarc.iam.gserviceaccount.com
-
-
-# https://console.cloud.google.com/iam-admin/troubleshooter;permissions=storage.objects.get;principal=ic-service-account@sky3-prod-zigzag.iam.gserviceaccount.com;resources=%2F%2Fstorage.googleapis.com%2Fprojects%2F_%2Fbuckets%2Fsky3-prod-zigzag-ic-gcs
