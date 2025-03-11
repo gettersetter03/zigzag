@@ -151,6 +151,15 @@ module "ic-vpc" {
   source       = "./modules/net-vpc"
   name = "ic-vpc"
   project_id   = var.project_id
+
+    # Enable private Google API access route
+  create_googleapis_routes = {
+    private      = true  
+    private-6    = false
+    restricted   = true
+    restricted-6 = false
+  }
+
   subnets = [
     {
       name   = "ic-subnet"
