@@ -1,0 +1,46 @@
+sky3-prod-zigzag:
+	1012764049148@cloudservices.gserviceaccount.com - Editor
+	service-1012764049148@containerregistry.iam.gserviceaccount.com - Container Registry Service Agent
+	service-1012764049148@gcp-sa-artifactregistry.iam.gserviceaccount.com - Artifact Registry Service Agent
+	service-1012764049148@gcp-sa-cloudscheduler.iam.gserviceaccount.com - Cloud Scheduler Service Agent
+	service-1012764049148@gcp-sa-eventarc.iam.gserviceaccount.com - Eventarc Service Agent
+	service-1012764049148@gcp-sa-pubsub.iam.gserviceaccount.com - Cloud Pub/Sub Service Agent
+	service-1012764049148@gcp-sa-websecurityscanner.iam.gserviceaccount.com - Cloud Web Security Scanner Service Agent
+	service-1012764049148@gs-project-accounts.iam.gserviceaccount.com - Pub/Sub Publisher
+	service-1012764049148@serverless-robot-prod.iam.gserviceaccount.com - Cloud Run Service Agent
+
+sky3-geo-dig-prd-t-zigzag-1:
+	598895811419@cloudbuild.gserviceaccount.com - Cloud Build Service Account
+	598895811419@cloudservices.gserviceaccount.com - Editor
+	service-598895811419@compute-system.iam.gserviceaccount.com - Compute Engine Service Agent
+	service-598895811419@container-engine-robot.iam.gserviceaccount.com - Kubernetes Engine Service Agent
+	service-598895811419@containerregistry.iam.gserviceaccount.com - Container Registry Service Agent
+	service-598895811419@gcf-admin-robot.iam.gserviceaccount.com - Cloud Functions Service Agent
+	service-598895811419@gcp-sa-artifactregistry.iam.gserviceaccount.com - Artifact Registry Service Agent
+	service-598895811419@gcp-sa-cloudbuild.iam.gserviceaccount.com - Cloud Build Service Agent
+	service-598895811419@gcp-sa-cloudscheduler.iam.gserviceaccount.com - Cloud Scheduler Service Agent
+	service-598895811419@gcp-sa-eventarc.iam.gserviceaccount.com - Eventarc Service Agent
+	service-598895811419@gcp-sa-gkenode.iam.gserviceaccount.com - Kubernetes Engine Node Service Agent
+	service-598895811419@gcp-sa-pubsub.iam.gserviceaccount.com - Cloud Pub/Sub Service Agent
+	service-598895811419@gcp-sa-websecurityscanner.iam.gserviceaccount.com - Cloud Web Security Scanner Service Agent
+	service-598895811419@gs-project-accounts.iam.gserviceaccount.com - Pub/Sub Publisher
+	service-598895811419@serverless-robot-prod.iam.gserviceaccount.com - Cloud Run Service Agent
+
+
+WHAT HAS BEEN REMOVED AFTER PENTEST
+sky3-geo-dig-prd-t-zigzag-1:
+	598895811419@cloudservices.gserviceaccount.com - Editor
+	service-598895811419@container-engine-robot.iam.gserviceaccount.com - Kubernetes Engine Service Agent
+	service-598895811419@containerregistry.iam.gserviceaccount.com - Container Registry Service Agent
+	service-598895811419@gcp-sa-artifactregistry.iam.gserviceaccount.com - Artifact Registry Service Agent
+	service-598895811419@gcp-sa-cloudscheduler.iam.gserviceaccount.com - Cloud Scheduler Service Agent
+	service-598895811419@gcp-sa-pubsub.iam.gserviceaccount.com - Cloud Pub/Sub Service Agent
+	service-598895811419@gcp-sa-websecurityscanner.iam.gserviceaccount.com - Cloud Web Security Scanner Service Agent
+sky3-prod-zigzag:
+	1012764049148@cloudservices.gserviceaccount.com - Editor
+	service-1012764049148@compute-system.iam.gserviceaccount.com - Compute Engine Service Agent
+	service-1012764049148@containerregistry.iam.gserviceaccount.com - Container Registry Service Agent
+	service-1012764049148@gcp-sa-artifactregistry.iam.gserviceaccount.com - Artifact Registry Service Agent
+	service-1012764049148@gcp-sa-cloudscheduler.iam.gserviceaccount.com - Cloud Scheduler Service Agent
+	service-1012764049148@gcp-sa-pubsub.iam.gserviceaccount.com - Cloud Pub/Sub Service Agent
+	service-1012764049148@gcp-sa-websecurityscanner.iam.gserviceaccount.com - Cloud Web Security Scanner Service Agent

@@ -1,0 +1,22 @@
+$env:TF_CLI_CONFIG_FILE="C:\Users\AValansi\Desktop\zigzag\.terraformrc"
+gcloud auth application-default login
+
+import resource format FOR REGISTRY (for other resources its slightly different): .\terraform.exe import module.ic-artifact-registry.google_artifact_registry_repository.registry projects/sky3-prod-zigzag/locations/me-west1/repositories/ic-artifact-registry
+
+import resource format FOR SERVICE ACCOUNT: .\terraform.exe import 'module.ic-cr-service-account.google_service_account.service_account[0]' projects/sky3-prod-zigzag/serviceAccounts/ic-cr-service-account@sky3-prod-zigzag.iam.gserviceaccount.com
+
+import resource format FOR BUCKET: .\terraform.exe import module.trusted-bucket.google_storage_bucket.bucket sky3-geo-dig-prd-t-zigzag-1-trusted-gcs 
+
+import resource format FOR TRIGGER: .\terraform.exe import 'module.trusted-cr.google_eventarc_trigger.gcs_bucket_triggers[\"trusted-trigger\"]' projects/sky3-geo-dig-prd-t-zigzag-1/locations/me-west1/triggers/gcs-bucket-trusted-trigger
+
+import resource format FOR CLOUDRUN: .\terraform.exe import 'module.trusted-cr.google_cloud_run_v2_service.service[0]' projects/sky3-geo-dig-prd-t-zigzag-1/locations/me-west1/services/td-cr-zigzag
+
+import resource format FOR VPC: .\terraform.exe import 'module.ic-vpc.google_compute_network.network[0]' projects/sky3-prod-zigzag/global/networks/ic-vpc
+
+check if cloud storage is emitting (returning) events: resource.type="gcs_bucket"
+logName="projects/sky3-geo-dig-prd-t-zigzag-1/logs/cloudaudit.googleapis.com%2Fdata_access"
+protoPayload.methodName="storage.objects.create"
+
+
+
+
