@@ -1,4 +1,5 @@
 $env:TF_CLI_CONFIG_FILE="C:\Users\AValansi\Desktop\zigzag\.terraformrc"
+$env:TF_CLI_CONFIG_FILE="C:\Users\ITertman\Desktop\dev\zigzag\.terraformrc"
 gcloud auth application-default login
 
 import resource format FOR REGISTRY (for other resources its slightly different): .\terraform.exe import module.ic-artifact-registry.google_artifact_registry_repository.registry projects/sky3-prod-zigzag/locations/me-west1/repositories/ic-artifact-registry
@@ -17,6 +18,8 @@ check if cloud storage is emitting (returning) events: resource.type="gcs_bucket
 logName="projects/sky3-geo-dig-prd-t-zigzag-1/logs/cloudaudit.googleapis.com%2Fdata_access"
 protoPayload.methodName="storage.objects.create"
 
-
+docker load -i "C:\Users\ITertman\Desktop\zigzag.tar"
+docker tag zigzag:0.1.0 me-west1-docker.pkg.dev/sky3-prod-zigzag/ic-artifact-registry/puppeteer:latest
+docker push me-west1-docker.pkg.dev/sky3-prod-zigzag/ic-artifact-registry/puppeteer:latest
 
 
