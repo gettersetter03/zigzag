@@ -39,11 +39,6 @@ variable "gcp_vpc_name" {
   type        = string
 }
 
-variable "gcp_router_name" {
-  description = "The GCP VPN router name."
-  type        = string
-}
-
 variable "azure_public_ip_1" {
   type        = string
   description = "The Azure Subscription ID"
